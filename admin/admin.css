@@ -1,0 +1,27 @@
+*{
+    padding: 7px;
+    margin: 5px;
+    box-sizing: border-box;
+}
+.from{
+    max-width: 600px;
+    margin: auto;
+
+}
+.control{
+    margin-top: 7px;
+    margin: auto;
+}
+.control label{
+    display: block;
+    margin-bottom: 5px;
+}
+.control input{
+    padding: 7px 10px;
+    outline: auto;
+}
+.control div{
+    display: block;
+    margin-bottom: 5px;
+}
+
