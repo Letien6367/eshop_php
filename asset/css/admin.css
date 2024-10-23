@@ -1,0 +1,71 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+form {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.control {
+    margin-top: 7px;
+}
+
+.control label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.control input[type=text],
+.control input[type=number],
+.control input[type=password] {
+    padding: 7px 10px;
+    outline: none;
+    border-radius: 5px;
+    width: 100%;
+    border: 1px solid grey;
+}
+
+.control input[type=number]:focus,
+.control input[type=text]:focus {
+    box-shadow: 0 0 0 3px rgba(4, 130, 255, 0.2);
+}
+
+.control input[type=submit] {
+    padding: 7px 10px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+
+table {
+    max-width: 1000px;
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid rgb(120, 120, 120);
+    padding: 5px;
+}
+
+nav ul{
+    display: flex;
+}
+nav ul li{
+    list-style: none;
+}
+nav li a{
+    text-decoration: none;
+    padding: 20px 10px;
+}
+
+.image{
+    max-width: 80%;
+    max-height: 200px;
+    display: block;
+    margin: 10px auto;
+}

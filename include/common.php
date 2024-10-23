@@ -24,13 +24,10 @@ function is_get_method(): bool
  */
 function redirect_to(string $page)
 {
-	$page = ROOT_PATH . "/$page";
-	$page = str_replace("//", "/", $page);
-	if ($page[0] == "/") {
-		$page = substr($page, 1);
-	}
+	$page = ltrim($page, "\\/ ");
 	if (!empty($page)) {
 		header("Location: /$page");
+		exit();
 	}
 }
 
@@ -39,11 +36,7 @@ function redirect_to(string $page)
  */
 function js_redirect_to(string $page, bool $is_stop = true)
 {
-	$page = ROOT_PATH . "/$page";
-	$page = str_replace("//", "/", $page);
-	if ($page[0] == "/") {
-		$page = substr($page, 1);
-	}
+	$page = ltrim($page, "\\/ ");
 	if (!empty($page)) {
 		echo "<script>location.href = '/$page';</script>";
 	}
@@ -216,11 +209,12 @@ function db_select(string $sql, array $data = null): array
 	}
 }
 
-function db_execute(string $sql, array $data = null): bool
+function db_execute(string $sql, array $data = null, &$last_insert_id = null ): bool
 {
 	try {
 		$query = execute_query($conn, $sql, $data);
 		$affected = $query->affected_rows;
+		$last_insert_id =  $conn->insert_id ;
 		$conn->close();
 		return $affected > 0;
 	} catch (Exception $ex) {
@@ -266,4 +260,56 @@ function dd(...$data)
 	$text = implode("\n\n", $textArr);
 	echo "<pre style='background-color: #efefef; padding: 15px; box-sizing: border-box'>$text</pre>";
 	die;
+}
+
+// Bổ sung chức năng đặt nội dung thông báo
+function set_notify($mesg){
+	$_SESSION["ESHOP_MESG"] = $mesg;
+}
+
+/*
+ * Xử lý liên quan đến điều hướng đường dẫn hệ thống, file route.php
+ */
+function handle_request($notFoundCallback = null)
+{
+	global $web_routes;
+	$url = str_replace(ROOT_PATH, "", $_SERVER["REQUEST_URI"]);
+	$url = strtok($url, '?');
+
+	$path = "";
+	if (array_key_exists($url, $web_routes)) {
+		if (is_array($web_routes[$url]) && count($web_routes[$url]) == 2) {
+			$path = $web_routes[$url][1];
+		} else if (is_string($web_routes[$url])) {
+			$path = $web_routes[$url];
+		}
+	}
+	$path = ltrim($path, " /\\");
+	if (file_exists($path)) {
+		include $path;
+	} else {
+		if ($notFoundCallback != null) {
+			$notFoundCallback();
+		} else {
+			echo "Không tìm thấy trang!";
+		}
+	}
+}
+
+function route(string $name, array $params = null)
+{
+	global $web_routes;
+	$query_string = "";
+	if ($params != null){
+		$query_string = "?" . http_build_query($params);
+	}
+	foreach ($web_routes as $path => $path_info) {
+		if (is_array($path_info) && count($path_info) == 2 && $path_info[0] === $name) {
+			return ROOT_PATH . $path . $query_string;
+		} else if (is_string($path_info) && $path_info == $name) {
+			return ROOT_PATH . $path . $query_string;
+		}
+	}
+	// Lỗi nếu không tìm thấy router
+	dd("\"'> Không tìm thấy [$name] trong hệ thống đường dẫn của trang web");
 }
